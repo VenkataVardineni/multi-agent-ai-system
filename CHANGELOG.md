@@ -10,3 +10,4 @@
 - Research tooling adds fetch_url_text with byte caps and UTF-8 decoding guards.
 - RetryingChatClient wraps ChatClient calls with exponential backoff.
 - OpenAI-compatible client raises descriptive errors when HTTP responses fail.
+- MockLLM.reset rewinds scripted chats for repeatable tests.
