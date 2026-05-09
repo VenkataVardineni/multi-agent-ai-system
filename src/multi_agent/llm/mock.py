@@ -18,6 +18,11 @@ class MockLLM:
         self._responder = responder
         self._idx = 0
 
+    def reset(self) -> None:
+        """Rewind scripted responses for repeatable tests."""
+
+        self._idx = 0
+
     def chat(
         self,
         messages: Sequence[dict[str, Any]],
