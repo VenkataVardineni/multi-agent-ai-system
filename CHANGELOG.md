@@ -8,3 +8,4 @@
 - Orchestrator accepts OrchestrationHooks for step lifecycle telemetry.
 - Filesystem tools now cover stat, recursive listing, globs, and atomic writes.
 - Research tooling adds fetch_url_text with byte caps and UTF-8 decoding guards.
+- RetryingChatClient wraps ChatClient calls with exponential backoff.
