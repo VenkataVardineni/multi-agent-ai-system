@@ -40,3 +40,30 @@ class WorkflowStep:
     instruction: str
     read_keys: tuple[str, ...] = ()
     write_key: str | None = None
+    label: str | None = None
+
+    def resolved_write_key(self, index: int) -> str:
+        if self.write_key:
+            return self.write_key
+        return f"{self.role.value}_step_{index}"
+
+    def to_wire_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "role": self.role.value,
+            "instruction": self.instruction,
+            "read_keys": list(self.read_keys),
+        }
+        if self.write_key is not None:
+            payload["write_key"] = self.write_key
+        if self.label is not None:
+            payload["label"] = self.label
+        return payload
+
+
+@dataclass
+class ParsedWorkflow:
+    """Validated workflow document loaded from JSON."""
+
+    workspace: str | None
+    steps: list[WorkflowStep]
+    warnings: tuple[str, ...] = ()
