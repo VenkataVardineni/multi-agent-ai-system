@@ -3,3 +3,4 @@
 ## 0.2.0
 
 - Weighted delegation scoring with reviewer-aware tie breaking.
+- Structured workflow loader surfaces duplicate write_key warnings.
