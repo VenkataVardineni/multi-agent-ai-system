@@ -1,0 +1,28 @@
+{
+  "workspace": ".",
+  "steps": [
+    {
+      "role": "planner",
+      "instruction": "Outline milestones for shipping an internal CLI tool.",
+      "write_key": "plan"
+    },
+    {
+      "role": "research",
+      "instruction": "List risks and unknowns implied by the plan.",
+      "read_keys": ["plan"],
+      "write_key": "research_notes"
+    },
+    {
+      "role": "writer",
+      "instruction": "Draft a concise stakeholder update using prior notes.",
+      "read_keys": ["plan", "research_notes"],
+      "write_key": "draft"
+    },
+    {
+      "role": "reviewer",
+      "instruction": "Critique the draft for clarity and missing risks.",
+      "read_keys": ["draft"],
+      "write_key": "review"
+    }
+  ]
+}
