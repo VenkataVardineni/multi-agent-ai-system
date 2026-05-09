@@ -5,15 +5,21 @@ import threading
 from typing import Any
 
 from multi_agent.constants import GLOBAL_MEMORY_NS
+from multi_agent.memory_journal import MemoryJournal
 
 
 class SharedMemory:
     """Thread-safe key/value memory shared across agents in a session."""
 
-    def __init__(self, namespace: str = GLOBAL_MEMORY_NS) -> None:
+    def __init__(
+        self,
+        namespace: str = GLOBAL_MEMORY_NS,
+        journal: MemoryJournal | None = None,
+    ) -> None:
         self._namespace = namespace
         self._data: dict[str, Any] = {}
         self._lock = threading.RLock()
+        self._journal = journal
 
     @property
     def namespace(self) -> str:
@@ -26,6 +32,8 @@ class SharedMemory:
     def set(self, key: str, value: Any) -> None:
         with self._lock:
             self._data[key] = value
+        if self._journal is not None:
+            self._journal.record("memory_set", key=key)
 
     def update(self, other: dict[str, Any]) -> None:
         with self._lock:
