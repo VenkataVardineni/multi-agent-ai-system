@@ -6,3 +6,4 @@
 - Structured workflow loader surfaces duplicate write_key warnings.
 - Optional MemoryJournal records SharedMemory writes for tracing.
 - Orchestrator accepts OrchestrationHooks for step lifecycle telemetry.
+- Filesystem tools now cover stat, recursive listing, globs, and atomic writes.
