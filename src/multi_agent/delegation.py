@@ -29,8 +29,17 @@ class DelegationRouter:
         for role, keywords in self.keywords.items():
             for keyword in keywords:
                 if keyword in text:
-                    scores[role] += 1
-        best_role, best_score = max(scores.items(), key=lambda item: item[1])
+                    scores[role] += len(keyword)
+
+        best_score = max(scores.values())
         if best_score == 0:
             return self.default_role
-        return best_role
+
+        tied = [role for role, score in scores.items() if score == best_score]
+        if len(tied) == 1:
+            return tied[0]
+
+        # Prefer reviewer feedback when multiple specialists tie.
+        if AgentRole.REVIEWER in tied:
+            return AgentRole.REVIEWER
+        return min(tied, key=lambda r: r.value)
