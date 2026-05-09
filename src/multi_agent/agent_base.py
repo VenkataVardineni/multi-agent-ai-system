@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from multi_agent.constants import TOOL_LOOP_MAX
+from multi_agent.constants import effective_tool_loop_max
 from multi_agent.llm.protocol import ChatClient, ChatResult
 from multi_agent.prompts import system_prompt_for
 from multi_agent.tools.registry import ToolContext, ToolRegistry
@@ -28,7 +28,7 @@ class BaseAgent:
         ]
         tools = self.registry.openai_tools_payload()
 
-        for _ in range(TOOL_LOOP_MAX):
+        for _ in range(effective_tool_loop_max()):
             result = self.llm.chat(messages, tools)
             if not result.tool_calls:
                 return (result.content or "").strip()
