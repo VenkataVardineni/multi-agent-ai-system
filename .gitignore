@@ -11,6 +11,7 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+coverage.xml
 .mypy_cache/
 .ruff_cache/
 *.swp
