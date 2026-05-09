@@ -7,7 +7,6 @@ from multi_agent.memory import SharedMemory
 from multi_agent.tools.registry import ToolContext
 from multi_agent.types import AgentRole, Task, WorkflowStep
 
-
 AgentFactory = Callable[[], BaseAgent]
 
 

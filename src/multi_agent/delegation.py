@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 
 from multi_agent.types import AgentRole
 
-
 DEFAULT_KEYWORDS: dict[AgentRole, tuple[str, ...]] = {
     AgentRole.RESEARCH: ("research", "find", "search", "source", "reference", "paper"),
     AgentRole.CODING: ("code", "implement", "debug", "refactor", "patch", "build"),
@@ -19,7 +18,9 @@ DEFAULT_KEYWORDS: dict[AgentRole, tuple[str, ...]] = {
 class DelegationRouter:
     """Routes a natural-language wish to the best-scoring specialist."""
 
-    keywords: dict[AgentRole, tuple[str, ...]] = field(default_factory=lambda: dict(DEFAULT_KEYWORDS))
+    keywords: dict[AgentRole, tuple[str, ...]] = field(
+        default_factory=lambda: dict(DEFAULT_KEYWORDS),
+    )
     default_role: AgentRole = AgentRole.PLANNER
 
     def route(self, message: str) -> AgentRole:
