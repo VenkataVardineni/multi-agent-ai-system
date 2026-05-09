@@ -15,3 +15,4 @@
 - Package exports highlight ParsedWorkflow, hooks, and MemoryJournal helpers.
 - MIT LICENSE file ships alongside classifier metadata.
 - README documents MULTI_AGENT_* environment shortcuts and new CLI switches.
+- Local verify.sh optionally runs Ruff when installed.
