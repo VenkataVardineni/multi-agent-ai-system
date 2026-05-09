@@ -21,3 +21,4 @@
 - Continuous Integration exercises pytest and Ruff on Python 3.10 through 3.12.
 - WorkflowStep exposes resolved_write_key() for deterministic orchestration outputs.
 - ParsedWorkflow bundles normalized steps plus loader warnings.
+- SharedMemory optionally connects to MemoryJournal without breaking callers.
