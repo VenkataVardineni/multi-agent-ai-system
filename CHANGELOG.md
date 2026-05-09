@@ -18,3 +18,4 @@
 - Local verify.sh optionally runs Ruff when installed.
 - tiny.csv example aids Data agent demonstrations.
 - Pytest coverage expands across loader, retries, hooks, registry helpers, and CLI dry-run.
+- Continuous Integration exercises pytest and Ruff on Python 3.10 through 3.12.
