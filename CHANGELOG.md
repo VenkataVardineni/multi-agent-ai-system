@@ -17,3 +17,4 @@
 - README documents MULTI_AGENT_* environment shortcuts and new CLI switches.
 - Local verify.sh optionally runs Ruff when installed.
 - tiny.csv example aids Data agent demonstrations.
+- Pytest coverage expands across loader, retries, hooks, registry helpers, and CLI dry-run.
