@@ -11,3 +11,4 @@
 - RetryingChatClient wraps ChatClient calls with exponential backoff.
 - OpenAI-compatible client raises descriptive errors when HTTP responses fail.
 - MockLLM.reset rewinds scripted chats for repeatable tests.
+- CLI learns workflow --dry-run, delegate --role overrides, and MULTI_AGENT_WORKSPACE defaults.
