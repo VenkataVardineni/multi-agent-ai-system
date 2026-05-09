@@ -23,3 +23,4 @@
 - ParsedWorkflow bundles normalized steps plus loader warnings.
 - SharedMemory optionally connects to MemoryJournal without breaking callers.
 - Tool registry introspection lists deterministic tool_names().
+- Agent sessions track loose metadata for downstream integrations.
