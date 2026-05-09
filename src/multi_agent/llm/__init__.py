@@ -3,6 +3,7 @@
 from multi_agent.llm.mock import MockLLM
 from multi_agent.llm.openai_client import OpenAICompatClient
 from multi_agent.llm.protocol import ChatClient, ChatResult, ToolCallSpec
+from multi_agent.llm.retry import RetryingChatClient
 
 __all__ = [
     "ChatClient",
@@ -10,4 +11,5 @@ __all__ = [
     "ToolCallSpec",
     "MockLLM",
     "OpenAICompatClient",
+    "RetryingChatClient",
 ]
