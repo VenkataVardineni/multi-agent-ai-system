@@ -13,3 +13,4 @@
 - MockLLM.reset rewinds scripted chats for repeatable tests.
 - CLI learns workflow --dry-run, delegate --role overrides, and MULTI_AGENT_WORKSPACE defaults.
 - Package exports highlight ParsedWorkflow, hooks, and MemoryJournal helpers.
+- MIT LICENSE file ships alongside classifier metadata.
