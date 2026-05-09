@@ -14,3 +14,4 @@
 - CLI learns workflow --dry-run, delegate --role overrides, and MULTI_AGENT_WORKSPACE defaults.
 - Package exports highlight ParsedWorkflow, hooks, and MemoryJournal helpers.
 - MIT LICENSE file ships alongside classifier metadata.
+- README documents MULTI_AGENT_* environment shortcuts and new CLI switches.
