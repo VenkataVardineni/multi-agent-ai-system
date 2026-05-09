@@ -22,7 +22,9 @@ class OpenAICompatClient:
     ) -> None:
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY", "")
         self.model = model or os.environ.get("OPENAI_MODEL", DEFAULT_MODEL)
-        self.base_url = (base_url or os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")).rstrip("/")
+        default_base = "https://api.openai.com/v1"
+        raw_base = base_url or os.environ.get("OPENAI_BASE_URL", default_base)
+        self.base_url = raw_base.rstrip("/")
         self.timeout = timeout
 
     def chat(
@@ -50,7 +52,13 @@ class OpenAICompatClient:
 
         with httpx.Client(timeout=self.timeout) as client:
             response = client.post(url, headers=headers, content=json.dumps(payload))
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                snippet = response.text[:500]
+                raise RuntimeError(
+                    f"OpenAI HTTP {response.status_code} for {url}: {snippet}",
+                ) from exc
             data = response.json()
 
         choice = data["choices"][0]["message"]
