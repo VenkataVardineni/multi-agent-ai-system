@@ -4,6 +4,7 @@ from collections.abc import Callable, Mapping
 
 from multi_agent.agent_base import BaseAgent
 from multi_agent.memory import SharedMemory
+from multi_agent.orchestration_hooks import OrchestrationHooks
 from multi_agent.tools.registry import ToolContext
 from multi_agent.types import AgentRole, Task, WorkflowStep
 
@@ -21,9 +22,13 @@ class Orchestrator:
         steps: list[WorkflowStep],
         memory: SharedMemory,
         workspace_dir: str | None,
+        hooks: OrchestrationHooks | None = None,
     ) -> dict[str, str]:
         outputs: dict[str, str] = {}
         for index, step in enumerate(steps):
+            if hooks and hooks.on_step_start:
+                hooks.on_step_start(index, step)
+
             factory = self._builders.get(step.role)
             if factory is None:
                 raise KeyError(f"no agent factory registered for role={step.role}")
@@ -47,9 +52,12 @@ class Orchestrator:
             )
             result = agent.run(task, ctx)
 
-            write_key = step.write_key or f"{step.role.value}_step_{index}"
+            write_key = step.resolved_write_key(index)
             memory.set(write_key, result)
             outputs[write_key] = result
+
+            if hooks and hooks.on_step_complete:
+                hooks.on_step_complete(index, step, result)
 
         return outputs
 
