@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +16,7 @@ from multi_agent.agents import (
     build_reviewer_agent,
     build_writer_agent,
 )
+from multi_agent.constants import ENV_WORKSPACE
 from multi_agent.delegation import DelegationRouter
 from multi_agent.llm.mock import MockLLM
 from multi_agent.llm.openai_client import OpenAICompatClient
@@ -23,7 +27,21 @@ from multi_agent.orchestrator import Orchestrator
 from multi_agent.session import AgentSession
 from multi_agent.tools import build_default_registry
 from multi_agent.tools.registry import ToolContext, ToolRegistry
-from multi_agent.types import AgentRole, Task, WorkflowStep
+from multi_agent.types import AgentRole, Task
+from multi_agent.workflow_loader import load_workflow_file
+
+
+def _package_version() -> str:
+    try:
+        return version("multi-agent")
+    except PackageNotFoundError:
+        return "0.0.0"
+
+
+def _resolve_workspace(cli_value: str | None) -> str:
+    if cli_value:
+        return cli_value
+    return os.environ.get(ENV_WORKSPACE, ".")
 
 
 def _build_llm(use_mock: bool) -> ChatClient:
@@ -46,25 +64,6 @@ def _build_llm(use_mock: bool) -> ChatClient:
     return OpenAICompatClient()
 
 
-def _workflow_steps_from_json(payload: dict[str, Any]) -> list[WorkflowStep]:
-    raw_steps = payload.get("steps") or []
-    steps: list[WorkflowStep] = []
-    for item in raw_steps:
-        role = AgentRole(str(item["role"]))
-        instruction = str(item["instruction"])
-        read_keys = tuple(str(k) for k in item.get("read_keys", []) or [])
-        write_key = item.get("write_key")
-        steps.append(
-            WorkflowStep(
-                role=role,
-                instruction=instruction,
-                read_keys=read_keys,
-                write_key=str(write_key) if write_key else None,
-            )
-        )
-    return steps
-
-
 def _builders_for(registry: ToolRegistry, llm: ChatClient) -> dict[AgentRole, Any]:
     return {
         AgentRole.PLANNER: lambda: build_planner(registry, llm),
@@ -77,7 +76,15 @@ def _builders_for(registry: ToolRegistry, llm: ChatClient) -> dict[AgentRole, An
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Multi-agent orchestration CLI")
+    parser = argparse.ArgumentParser(
+        description="Multi-agent orchestration CLI",
+        prog="multi-agent",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {_package_version()}",
+    )
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument(
         "--json-out",
@@ -88,18 +95,29 @@ def main(argv: list[str] | None = None) -> int:
 
     delegate = sub.add_parser("delegate", help="Route a message to an agent")
     delegate.add_argument("message")
+    delegate.add_argument(
+        "--role",
+        choices=[r.value for r in AgentRole],
+        default=None,
+        help="Force a specific agent role instead of automatic routing",
+    )
     delegate.add_argument("--mock-llm", action="store_true")
-    delegate.add_argument("--workspace", default=".")
+    delegate.add_argument("--workspace", default=None)
 
     agent_cmd = sub.add_parser("agent", help="Run a single agent role")
     agent_cmd.add_argument("--role", required=True, choices=[r.value for r in AgentRole])
     agent_cmd.add_argument("--task", required=True)
     agent_cmd.add_argument("--mock-llm", action="store_true")
-    agent_cmd.add_argument("--workspace", default=".")
+    agent_cmd.add_argument("--workspace", default=None)
 
     workflow = sub.add_parser("workflow", help="Run an orchestrated workflow JSON file")
     workflow.add_argument("--file", required=True)
     workflow.add_argument("--mock-llm", action="store_true")
+    workflow.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate workflow JSON and print planned steps without executing agents",
+    )
 
     args = parser.parse_args(argv)
 
@@ -110,11 +128,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "delegate":
         llm = _build_llm(args.mock_llm)
         router = DelegationRouter()
-        role = router.route(args.message)
+        role = AgentRole(args.role) if args.role else router.route(args.message)
         builders_plain = _builders_for(registry, llm)
         agent = builders_plain[role]()
+        workspace = _resolve_workspace(args.workspace)
         session_mem = SharedMemory()
-        ctx = ToolContext(memory=session_mem, workspace_dir=args.workspace)
+        ctx = ToolContext(memory=session_mem, workspace_dir=workspace)
         task = Task(id="delegated-1", description=args.message, role=role)
         result = agent.run(task, ctx)
         payload = {"role": role.value, "output": result}
@@ -126,8 +145,9 @@ def main(argv: list[str] | None = None) -> int:
         role = AgentRole(args.role)
         builders_plain = _builders_for(registry, llm)
         agent = builders_plain[role]()
+        workspace = _resolve_workspace(args.workspace)
         session_mem = SharedMemory()
-        ctx = ToolContext(memory=session_mem, workspace_dir=args.workspace)
+        ctx = ToolContext(memory=session_mem, workspace_dir=workspace)
         task = Task(id="single-1", description=args.task, role=role)
         result = agent.run(task, ctx)
         print(result)
@@ -136,17 +156,29 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "workflow":
         llm = _build_llm(args.mock_llm)
         path = Path(args.file)
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        steps = _workflow_steps_from_json(payload)
-        workspace = str(payload.get("workspace") or ".")
+        parsed = load_workflow_file(path)
 
+        if parsed.warnings:
+            for warning in parsed.warnings:
+                print(f"warning:{warning}", file=sys.stderr)
+
+        if args.dry_run:
+            summary = {
+                "workspace": parsed.workspace,
+                "warnings": list(parsed.warnings),
+                "steps": [step.to_wire_dict() for step in parsed.steps],
+            }
+            print(json.dumps(summary, indent=2))
+            return 0
+
+        workspace = str(parsed.workspace or ".")
         memory = SharedMemory()
         session = AgentSession(memory=memory, registry=registry, workspace_dir=workspace)
 
         orchestrator = Orchestrator(_builders_for(registry, llm))
 
         outputs = orchestrator.run_workflow(
-            steps=steps,
+            steps=parsed.steps,
             memory=session.memory,
             workspace_dir=session.workspace_dir,
         )
