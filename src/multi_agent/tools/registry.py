@@ -48,6 +48,9 @@ class ToolRegistry:
     def definitions(self) -> list[ToolDefinition]:
         return list(self._defs.values())
 
+    def tool_names(self) -> list[str]:
+        return sorted(self._defs.keys())
+
     def execute(self, name: str, arguments_json: str, ctx: ToolContext) -> str:
         definition = self.get(name)
         try:
