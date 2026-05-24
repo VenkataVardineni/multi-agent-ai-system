@@ -33,3 +33,6 @@ class MemoryJournal:
         if limit >= len(items):
             return items
         return items[-limit:]
+
+    def __len__(self) -> int:
+        return len(self._events)
