@@ -1,3 +1,5 @@
+"""Restricted Python snippet execution for agent code tasks."""
+
 from __future__ import annotations
 
 import ast

@@ -1,3 +1,5 @@
+"""Workspace-scoped filesystem tools with path sandboxing."""
+
 from __future__ import annotations
 
 import json
