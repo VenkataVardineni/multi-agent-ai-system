@@ -29,3 +29,14 @@ def test_read_text_file_rejects_binary(tmp_path):
     out = reg.execute("read_text_file", '{"path": "bin.dat"}', _ctx(tmp_path))
     assert "binary" in out
 
+
+def test_write_workspace_text_file(tmp_path):
+    reg = ToolRegistry(file_tool_definitions())
+    out = reg.execute(
+        "write_workspace_text_file",
+        '{"path": "nested/out.txt", "content": "data"}',
+        _ctx(tmp_path),
+    )
+    assert "wrote:" in out
+    assert (tmp_path / "nested" / "out.txt").read_text(encoding="utf-8") == "data"
+
