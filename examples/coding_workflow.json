@@ -1,0 +1,16 @@
+{
+  "workspace": ".",
+  "steps": [
+    {
+      "role": "coding",
+      "instruction": "Review src/multi_agent/constants.py and summarize env vars",
+      "write_key": "code_review"
+    },
+    {
+      "role": "reviewer",
+      "instruction": "Critique the coding agent summary",
+      "read_keys": ["code_review"],
+      "write_key": "final_review"
+    }
+  ]
+}
