@@ -17,3 +17,8 @@ def test_shared_memory_merge_snapshot():
     mem.merge_snapshot({"y": 99})
     assert mem.get("y") == 99
 
+
+def test_shared_memory_namespace():
+    mem = SharedMemory(namespace="session-1")
+    assert mem.namespace == "session-1"
+
