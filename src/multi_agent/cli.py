@@ -16,7 +16,7 @@ from multi_agent.agents import (
     build_reviewer_agent,
     build_writer_agent,
 )
-from multi_agent.constants import ENV_WORKSPACE
+from multi_agent.constants import ENV_MOCK_LLM, ENV_WORKSPACE
 from multi_agent.delegation import DelegationRouter
 from multi_agent.llm.mock import MockLLM
 from multi_agent.llm.openai_client import OpenAICompatClient
@@ -45,7 +45,7 @@ def _resolve_workspace(cli_value: str | None) -> str:
 
 
 def _build_llm(use_mock: bool) -> ChatClient:
-    if use_mock:
+    if use_mock or os.environ.get(ENV_MOCK_LLM, "").strip() in {"1", "true", "yes"}:
         return MockLLM(
             responses=[
                 ChatResult(
@@ -117,6 +117,11 @@ def main(argv: list[str] | None = None) -> int:
         "--dry-run",
         action="store_true",
         help="Validate workflow JSON and print planned steps without executing agents",
+    )
+    workflow.add_argument(
+        "--output",
+        default=None,
+        help="Write workflow JSON results to this file path",
     )
 
     validate = sub.add_parser("validate", help="Validate a workflow JSON file")
@@ -196,7 +201,11 @@ def main(argv: list[str] | None = None) -> int:
             memory=session.memory,
             workspace_dir=session.workspace_dir,
         )
-        print(json.dumps({"outputs": outputs, "memory": memory.snapshot()}, indent=2))
+        payload = {"outputs": outputs, "memory": memory.snapshot()}
+        rendered = json.dumps(payload, indent=2)
+        if args.output:
+            Path(args.output).write_text(rendered, encoding="utf-8")
+        print(rendered)
         return 0
 
     parser.error("unknown command")
