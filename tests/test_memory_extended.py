@@ -22,3 +22,19 @@ def test_shared_memory_namespace():
     mem = SharedMemory(namespace="session-1")
     assert mem.namespace == "session-1"
 
+import threading
+
+
+def test_shared_memory_concurrent_writes():
+    mem = SharedMemory()
+    def writer(start: int):
+        for i in range(50):
+            mem.set(f"k{start + i}", start + i)
+
+    threads = [threading.Thread(target=writer, args=(i * 50,)) for i in range(4)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert len(mem.keys()) == 200
+
