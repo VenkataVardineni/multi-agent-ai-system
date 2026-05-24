@@ -9,7 +9,7 @@ from multi_agent.tools.registry import ToolRegistry
 
 @dataclass
 class AgentSession:
-    """Bundles shared memory and resources for one orchestrated run."""
+    """Bundles shared memory, tool registry, workspace, and run metadata."""
 
     memory: SharedMemory
     registry: ToolRegistry
