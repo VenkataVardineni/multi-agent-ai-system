@@ -42,3 +42,13 @@ def test_registry_reraises_tool_execution_error():
     with pytest.raises(ToolExecutionError, match="boom"):
         reg.execute("bad", "{}", ctx)
 
+
+def test_openai_tools_payload_shape():
+    from multi_agent.tools.memory_tools import memory_tool_definitions
+
+    reg = ToolRegistry(memory_tool_definitions())
+    payload = reg.openai_tools_payload()
+    assert payload[0]["type"] == "function"
+    assert "name" in payload[0]["function"]
+    assert "parameters" in payload[0]["function"]
+
