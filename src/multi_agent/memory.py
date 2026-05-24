@@ -52,6 +52,13 @@ class SharedMemory:
         with self._lock:
             return list(self._data.keys())
 
+    def delete(self, key: str) -> bool:
+        with self._lock:
+            if key not in self._data:
+                return False
+            del self._data[key]
+            return True
+
     def __contains__(self, key: str) -> bool:
         with self._lock:
             return key in self._data
