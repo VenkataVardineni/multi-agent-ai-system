@@ -1,0 +1,16 @@
+{
+  "workspace": ".",
+  "steps": [
+    {
+      "role": "data",
+      "instruction": "Profile examples/tiny.csv and summarize columns",
+      "write_key": "profile"
+    },
+    {
+      "role": "writer",
+      "instruction": "Write a short report from the profile",
+      "read_keys": ["profile"],
+      "write_key": "report"
+    }
+  ]
+}
