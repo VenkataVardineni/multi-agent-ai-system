@@ -10,3 +10,13 @@ def test_memory_journal_record_stores_kind_and_key():
     assert events[0].key == "alpha"
     assert "ts" in events[0].payload
 
+
+def test_memory_journal_tail_limit_and_ring_buffer():
+    journal = MemoryJournal(max_events=20)
+    for i in range(30):
+        journal.record("tick", key=str(i))
+    tail = journal.tail(limit=5)
+    assert len(tail) == 5
+    assert tail[-1].key == "29"
+    assert len(journal.tail(limit=100)) == 20
+
