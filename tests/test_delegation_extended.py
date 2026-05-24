@@ -7,3 +7,14 @@ def test_delegation_weighted_scoring():
     role = router.route("please refactor the implementation")
     assert role == AgentRole.CODING
 
+
+def test_delegation_reviewer_wins_tie():
+    router = DelegationRouter(
+        keywords={
+            AgentRole.WRITER: ("write",),
+            AgentRole.REVIEWER: ("write",),
+            AgentRole.PLANNER: ("x",),
+        }
+    )
+    assert router.route("write") == AgentRole.REVIEWER
+
