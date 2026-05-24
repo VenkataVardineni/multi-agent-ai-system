@@ -55,3 +55,14 @@ class SharedMemory:
     def __contains__(self, key: str) -> bool:
         with self._lock:
             return key in self._data
+
+    def save_snapshot(self, path: str | Path) -> None:
+        target = Path(path)
+        target.write_text(json.dumps(self.snapshot(), ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def load_snapshot(self, path: str | Path) -> None:
+        target = Path(path)
+        payload = json.loads(target.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError("snapshot must be a JSON object")
+        self.merge_snapshot(payload)
