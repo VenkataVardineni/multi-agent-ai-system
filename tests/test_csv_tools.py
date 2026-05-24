@@ -12,3 +12,10 @@ def test_analyze_csv_summaries(tmp_path):
     assert "row_count" in out
     assert "name" in out
 
+
+def test_analyze_csv_missing(tmp_path):
+    reg = ToolRegistry(csv_tool_definitions())
+    ctx = ToolContext(memory=SharedMemory(), workspace_dir=str(tmp_path))
+    out = reg.execute("analyze_csv", '{"path": "missing.csv"}', ctx)
+    assert "error" in out
+
