@@ -22,3 +22,10 @@ def test_read_text_file_rejects_traversal(tmp_path):
     with pytest.raises(ValueError, match="path escapes"):
         reg.execute("read_text_file", '{"path": "../etc/passwd"}', _ctx(tmp_path))
 
+
+def test_read_text_file_rejects_binary(tmp_path):
+    (tmp_path / "bin.dat").write_bytes(b"\x00\x01\x02")
+    reg = ToolRegistry(file_tool_definitions())
+    out = reg.execute("read_text_file", '{"path": "bin.dat"}', _ctx(tmp_path))
+    assert "binary" in out
+
