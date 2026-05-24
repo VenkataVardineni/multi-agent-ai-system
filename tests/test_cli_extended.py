@@ -41,3 +41,25 @@ def test_cli_delegate_mock_json():
     data = json.loads(proc.stdout)
     assert "role" in data and "output" in data
 
+
+def test_cli_delegate_role_override():
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "multi_agent",
+            "delegate",
+            "anything",
+            "--role",
+            "coding",
+            "--mock-llm",
+        ],
+        cwd=_repo(),
+        env={**os.environ, "PYTHONPATH": str(_repo() / "src")},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    data = json.loads(proc.stdout)
+    assert data["role"] == "coding"
+
