@@ -19,6 +19,12 @@ def _memory_set(ctx: ToolContext, args: dict[str, Any]) -> str:
     return f"stored:{key}"
 
 
+def _memory_delete(ctx: ToolContext, args: dict[str, Any]) -> str:
+    key = str(args["key"])
+    removed = ctx.memory.delete(key)
+    return "deleted" if removed else "missing"
+
+
 def _memory_list(ctx: ToolContext, args: dict[str, Any]) -> str:
     import json
 
@@ -59,5 +65,15 @@ def memory_tool_definitions() -> list[ToolDefinition]:
             description="List all keys currently stored in shared session memory.",
             parameters={"type": "object", "properties": {}},
             handler=_memory_list,
+        ),
+        ToolDefinition(
+            name="memory_delete",
+            description="Remove a key from shared session memory.",
+            parameters={
+                "type": "object",
+                "properties": {"key": {"type": "string"}},
+                "required": ["key"],
+            },
+            handler=_memory_delete,
         ),
     ]
