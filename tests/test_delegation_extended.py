@@ -18,3 +18,12 @@ def test_delegation_reviewer_wins_tie():
     )
     assert router.route("write") == AgentRole.REVIEWER
 
+
+def test_delegation_custom_default():
+    router = DelegationRouter(
+        keywords={AgentRole.DATA: ("metric",)},
+        default_role=AgentRole.DATA,
+    )
+    assert router.route("hello") == AgentRole.DATA
+    assert router.route("show metric") == AgentRole.DATA
+
