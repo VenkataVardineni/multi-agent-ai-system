@@ -34,6 +34,7 @@ class DelegationRouter:
         return cls(keywords=keywords, default_role=default_role)
 
     def route(self, message: str) -> AgentRole:
+        """Score keyword hits (weighted by length) and return the best role."""
         text = message.lower()
         scores: dict[AgentRole, int] = {role: 0 for role in AgentRole}
         for role, keywords in self.keywords.items():
