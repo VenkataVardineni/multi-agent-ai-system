@@ -40,3 +40,12 @@ def test_write_workspace_text_file(tmp_path):
     assert "wrote:" in out
     assert (tmp_path / "nested" / "out.txt").read_text(encoding="utf-8") == "data"
 
+
+def test_stat_workspace_path(tmp_path):
+    f = tmp_path / "a.txt"
+    f.write_text("x", encoding="utf-8")
+    reg = ToolRegistry(file_tool_definitions())
+    out = reg.execute("stat_workspace_path", '{"path": "a.txt"}', _ctx(tmp_path))
+    assert '"exists": true' in out.replace(" ", "")
+    assert '"is_file": true' in out.replace(" ", "")
+
