@@ -40,6 +40,9 @@ class ToolRegistry:
     def register(self, definition: ToolDefinition) -> None:
         self._defs[definition.name] = definition
 
+    def unregister(self, name: str) -> None:
+        self._defs.pop(name, None)
+
     def get(self, name: str) -> ToolDefinition:
         if name not in self._defs:
             raise KeyError(f"unknown tool: {name}")
