@@ -57,3 +57,16 @@ def test_list_workspace_entries_flat(tmp_path):
     out = reg.execute("list_workspace_entries", '{"path": "."}', _ctx(tmp_path))
     assert "a.txt" in out and "b.txt" in out
 
+
+def test_list_workspace_entries_recursive(tmp_path):
+    sub = tmp_path / "sub"
+    sub.mkdir()
+    (sub / "inner.txt").write_text("i", encoding="utf-8")
+    reg = ToolRegistry(file_tool_definitions())
+    out = reg.execute(
+        "list_workspace_entries",
+        '{"path": ".", "recursive": true}',
+        _ctx(tmp_path),
+    )
+    assert "inner.txt" in out
+
