@@ -1,5 +1,8 @@
+import json
+
 import pytest
 
+from multi_agent.exceptions import ToolExecutionError
 from multi_agent.memory import SharedMemory
 from multi_agent.tools.file_tools import file_tool_definitions
 from multi_agent.tools.registry import ToolContext, ToolRegistry
@@ -19,7 +22,7 @@ def test_read_text_file_utf8(tmp_path):
 
 def test_read_text_file_rejects_traversal(tmp_path):
     reg = ToolRegistry(file_tool_definitions())
-    with pytest.raises(ValueError, match="path escapes"):
+    with pytest.raises(ToolExecutionError, match="path escapes"):
         reg.execute("read_text_file", '{"path": "../etc/passwd"}', _ctx(tmp_path))
 
 
@@ -46,8 +49,9 @@ def test_stat_workspace_path(tmp_path):
     f.write_text("x", encoding="utf-8")
     reg = ToolRegistry(file_tool_definitions())
     out = reg.execute("stat_workspace_path", '{"path": "a.txt"}', _ctx(tmp_path))
-    assert '"exists": true' in out.replace(" ", "")
-    assert '"is_file": true' in out.replace(" ", "")
+    payload = json.loads(out)
+    assert payload["exists"] is True
+    assert payload["is_file"] is True
 
 
 def test_list_workspace_entries_flat(tmp_path):

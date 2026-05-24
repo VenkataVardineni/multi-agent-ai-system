@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+- Expanded pytest coverage across memory, journal, tools, LLM clients, CLI, and integration paths.
+- New `memory_list` tool lists shared session memory keys.
+- `SharedMemory.save_snapshot` / `load_snapshot` persist memory to JSON files.
+- `ToolRegistry.unregister` removes tools from dynamic registries.
+- `DelegationRouter.from_mapping` builds routers from plain dicts.
+- CLI adds `validate` subcommand for workflow JSON checks.
+- Documentation set: architecture, workflow format, tools, environment, contributing.
+- New examples: data profile workflow, custom tool demo, delegation matrix, hooks demo.
+- Package exports `Message` type for downstream integrations.
+
 ## 0.2.0
 
 - Weighted delegation scoring with reviewer-aware tie breaking.

@@ -20,6 +20,8 @@ def test_registry_invalid_json():
     with pytest.raises(ToolExecutionError, match="invalid JSON"):
         reg.execute("memory_set", "{bad", ctx)
 
+import json
+
 from multi_agent.tools.registry import ToolDefinition
 
 
@@ -30,7 +32,7 @@ def test_registry_serializes_dict_result():
     reg = ToolRegistry([ToolDefinition("demo", "d", {"type": "object", "properties": {}}, handler)])
     ctx = ToolContext(memory=SharedMemory())
     out = reg.execute("demo", "{}", ctx)
-    assert '"ok": true' in out.replace(" ", "")
+    assert json.loads(out)["ok"] is True
 
 
 def test_registry_reraises_tool_execution_error():
