@@ -17,3 +17,9 @@ def test_mock_llm_responder():
     )
     assert llm.chat([{"role": "user", "content": "x"}], None).content == "len=1"
 
+
+def test_mock_llm_exhausted():
+    llm = MockLLM(responses=[ChatResult(content="only", tool_calls=())])
+    assert llm.chat([], None).content == "only"
+    assert llm.chat([], None).content == "mock-final"
+
