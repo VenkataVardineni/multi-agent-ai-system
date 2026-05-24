@@ -15,3 +15,10 @@ def test_read_text_file_utf8(tmp_path):
     out = reg.execute("read_text_file", '{"path": "hello.txt"}', _ctx(tmp_path))
     assert out == "hola"
 
+
+
+def test_read_text_file_rejects_traversal(tmp_path):
+    reg = ToolRegistry(file_tool_definitions())
+    with pytest.raises(ValueError, match="path escapes"):
+        reg.execute("read_text_file", '{"path": "../etc/passwd"}', _ctx(tmp_path))
+
