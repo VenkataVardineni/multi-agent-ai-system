@@ -70,3 +70,11 @@ def test_list_workspace_entries_recursive(tmp_path):
     )
     assert "inner.txt" in out
 
+
+def test_glob_workspace_files(tmp_path):
+    (tmp_path / "one.csv").write_text("a", encoding="utf-8")
+    (tmp_path / "two.csv").write_text("b", encoding="utf-8")
+    reg = ToolRegistry(file_tool_definitions())
+    out = reg.execute("glob_workspace_files", '{"pattern": "*.csv"}', _ctx(tmp_path))
+    assert "one.csv" in out and "two.csv" in out
+
