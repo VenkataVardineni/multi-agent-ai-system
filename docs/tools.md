@@ -5,6 +5,7 @@
 | `memory_get` | Read a value from shared memory |
 | `memory_set` | Write a value to shared memory |
 | `memory_list` | List memory keys |
+| `memory_delete` | Remove a memory key |
 | `read_text_file` | Read UTF-8 text within the workspace |
 | `write_workspace_text_file` | Atomically write a text file |
 | `stat_workspace_path` | File metadata |

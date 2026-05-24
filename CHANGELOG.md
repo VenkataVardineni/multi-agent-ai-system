@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.1
+
+- `memory_delete` tool and `SharedMemory.delete` remove session keys.
+- CLI `workflow --output` writes JSON results to a file.
+- `MULTI_AGENT_MOCK_LLM` env enables offline CLI runs without flags.
+- `MemoryJournal` supports `len()` for buffered event counts.
+- Package exports `WorkflowError`, `ToolExecutionError`, and `MultiAgentError`.
+- Docs: security guide, CLI reference, custom tools guide.
+- CI and `scripts/coverage.sh` report pytest coverage.
+- Examples: memory snapshot demo and coding workflow JSON.
+- Tests cover validate CLI, snapshots, prompts, session, and edge tool paths.
+
 ## 0.3.0
 
 - Expanded pytest coverage across memory, journal, tools, LLM clients, CLI, and integration paths.

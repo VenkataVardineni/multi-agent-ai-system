@@ -2,7 +2,7 @@
 
 Python toolkit with specialized agents (research, coding, planner, data, writer, reviewer), **task delegation**, **shared memory**, **orchestration**, and **OpenAI-style tool calling** with offline `MockLLM` tests.
 
-**Version 0.3.0** — expanded test coverage, documentation, examples, and new helpers (`memory_list`, workflow `validate`, memory snapshot persistence).
+**Version 0.3.1** — expanded test coverage, documentation, examples, and new helpers (`memory_list`, workflow `validate`, memory snapshot persistence).
 
 ## Features
 
@@ -27,6 +27,7 @@ Environment shortcuts:
 
 - `MULTI_AGENT_WORKSPACE` — default workspace when `--workspace` is omitted on `delegate` / `agent`.
 - `MULTI_AGENT_MAX_TOOL_LOOPS` — upper bound for agent tool-call iterations (default `12`, capped at `256`).
+- `MULTI_AGENT_MOCK_LLM` — set to `1` to use offline MockLLM in the CLI without `--mock-llm`.
 
 See [docs/environment.md](docs/environment.md) for the full reference.
 
@@ -40,13 +41,13 @@ multi-agent delegate "ship checklist" --role planner --mock-llm
 multi-agent agent --role data --task "profile sample.csv" --workspace .
 multi-agent validate --file examples/sample_workflow.json
 multi-agent workflow --file examples/sample_workflow.json --dry-run
-multi-agent workflow --file examples/sample_workflow.json --mock-llm
+multi-agent workflow --file examples/sample_workflow.json --mock-llm --output results.json
 ```
 
 Install the `multi-agent` console script after `pip install -e .`:
 
 ```bash
-multi-agent workflow --file examples/sample_workflow.json --mock-llm
+multi-agent workflow --file examples/sample_workflow.json --mock-llm --output results.json
 ```
 
 ## Documentation
@@ -55,6 +56,9 @@ multi-agent workflow --file examples/sample_workflow.json --mock-llm
 - [Workflow JSON format](docs/workflow-format.md)
 - [Built-in tools](docs/tools.md)
 - [Environment variables](docs/environment.md)
+- [CLI reference](docs/cli.md)
+- [Security](docs/security.md)
+- [Custom tools](docs/custom-tools.md)
 - [Contributing](CONTRIBUTING.md)
 - [Examples index](examples/README.md)
 
