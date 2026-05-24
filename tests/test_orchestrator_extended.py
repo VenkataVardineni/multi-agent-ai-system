@@ -34,3 +34,19 @@ def test_orchestrator_missing_factory():
             ".",
         )
 
+import pytest
+
+
+def test_orchestrator_memory_snapshot_between_steps():
+    registry = build_default_registry()
+    llm = MockLLM(responses=[ChatResult(content="a", tool_calls=())])
+    orch = Orchestrator(_builders(registry, llm))
+    mem = SharedMemory()
+    orch.run_workflow(
+        [WorkflowStep(role=AgentRole.PLANNER, instruction="x")],
+        mem,
+        ".",
+    )
+    snap = orch.memory_snapshot_between_steps(mem)
+    assert snap["planner_step_0"] == "a"
+
