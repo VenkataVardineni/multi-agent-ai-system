@@ -9,3 +9,11 @@ def test_mock_llm_reset():
     llm.reset()
     assert llm.chat([], None).content == "first"
 
+
+def test_mock_llm_responder():
+    llm = MockLLM(
+        responses=[ChatResult(content="ignored", tool_calls=())],
+        responder=lambda msgs: ChatResult(content=f"len={len(msgs)}", tool_calls=()),
+    )
+    assert llm.chat([{"role": "user", "content": "x"}], None).content == "len=1"
+
