@@ -38,3 +38,11 @@ def test_shared_memory_concurrent_writes():
         t.join()
     assert len(mem.keys()) == 200
 
+
+def test_shared_memory_snapshot_deep_copy():
+    mem = SharedMemory()
+    mem.set("nested", {"items": [1, 2]})
+    snap = mem.snapshot()
+    snap["nested"]["items"].append(3)
+    assert mem.get("nested") == {"items": [1, 2]}
+
