@@ -1,6 +1,7 @@
 """Multi-agent orchestration with delegation, shared memory, and tool calling."""
 
 from multi_agent.delegation import DelegationRouter
+from multi_agent.exceptions import MultiAgentError, ToolExecutionError, WorkflowError
 from multi_agent.memory import SharedMemory
 from multi_agent.memory_journal import MemoryJournal
 from multi_agent.orchestration_hooks import OrchestrationHooks
@@ -26,4 +27,7 @@ __all__ = [
     "build_default_registry",
     "load_workflow_file",
     "parse_workflow_payload",
+    "MultiAgentError",
+    "ToolExecutionError",
+    "WorkflowError",
 ]
