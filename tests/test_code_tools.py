@@ -22,3 +22,10 @@ def test_run_python_snippet_memory_keys(tmp_path):
     )
     assert out == "11"
 
+
+def test_run_python_snippet_banned(tmp_path):
+    reg = ToolRegistry(code_tool_definitions())
+    ctx = ToolContext(memory=SharedMemory(), workspace_dir=str(tmp_path))
+    out = reg.execute("run_python_snippet", '{"code": "open(\"/etc/passwd\")"}', ctx)
+    assert "error:unsafe" in out
+
