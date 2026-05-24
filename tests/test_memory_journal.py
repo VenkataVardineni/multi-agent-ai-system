@@ -20,3 +20,13 @@ def test_memory_journal_tail_limit_and_ring_buffer():
     assert tail[-1].key == "29"
     assert len(journal.tail(limit=100)) == 20
 
+from multi_agent.memory import SharedMemory
+
+
+def test_shared_memory_records_journal_on_set():
+    journal = MemoryJournal()
+    mem = SharedMemory(journal=journal)
+    mem.set("k", 1)
+    assert journal.tail()[0].kind == "memory_set"
+    assert journal.tail()[0].key == "k"
+
