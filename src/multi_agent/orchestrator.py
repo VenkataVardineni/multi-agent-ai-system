@@ -24,6 +24,7 @@ class Orchestrator:
         workspace_dir: str | None,
         hooks: OrchestrationHooks | None = None,
     ) -> dict[str, str]:
+        """Execute workflow steps sequentially, writing each result to memory."""
         outputs: dict[str, str] = {}
         for index, step in enumerate(steps):
             if hooks and hooks.on_step_start:
