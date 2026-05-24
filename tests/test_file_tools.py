@@ -49,3 +49,11 @@ def test_stat_workspace_path(tmp_path):
     assert '"exists": true' in out.replace(" ", "")
     assert '"is_file": true' in out.replace(" ", "")
 
+
+def test_list_workspace_entries_flat(tmp_path):
+    (tmp_path / "a.txt").write_text("a", encoding="utf-8")
+    (tmp_path / "b.txt").write_text("b", encoding="utf-8")
+    reg = ToolRegistry(file_tool_definitions())
+    out = reg.execute("list_workspace_entries", '{"path": "."}', _ctx(tmp_path))
+    assert "a.txt" in out and "b.txt" in out
+
