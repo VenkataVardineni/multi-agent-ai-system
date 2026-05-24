@@ -24,3 +24,13 @@ def test_orchestrator_injects_memory_context():
     outputs = orch.run_workflow(steps, mem, ".")
     assert "planner_step_0" in outputs
 
+
+def test_orchestrator_missing_factory():
+    orch = Orchestrator({})
+    with pytest.raises(KeyError, match="no agent factory"):
+        orch.run_workflow(
+            [WorkflowStep(role=AgentRole.PLANNER, instruction="x")],
+            SharedMemory(),
+            ".",
+        )
+
