@@ -24,3 +24,11 @@ def test_loader_invalid_json_file(tmp_path):
     with pytest.raises(WorkflowError, match="invalid JSON"):
         load_workflow_file(bad)
 
+
+def test_loader_null_workspace():
+    parsed = parse_workflow_payload(
+        {"workspace": None, "steps": [{"role": "planner", "instruction": "x"}]}
+    )
+    assert parsed.workspace is None
+    assert len(parsed.steps) == 1
+
