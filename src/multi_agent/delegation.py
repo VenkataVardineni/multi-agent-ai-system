@@ -23,6 +23,16 @@ class DelegationRouter:
     )
     default_role: AgentRole = AgentRole.PLANNER
 
+    @classmethod
+    def from_mapping(
+        cls,
+        raw: dict[str, tuple[str, ...]],
+        *,
+        default_role: AgentRole = AgentRole.PLANNER,
+    ) -> "DelegationRouter":
+        keywords = {AgentRole(k): v for k, v in raw.items()}
+        return cls(keywords=keywords, default_role=default_role)
+
     def route(self, message: str) -> AgentRole:
         text = message.lower()
         scores: dict[AgentRole, int] = {role: 0 for role in AgentRole}
