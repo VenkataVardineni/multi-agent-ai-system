@@ -19,6 +19,13 @@ def _memory_set(ctx: ToolContext, args: dict[str, Any]) -> str:
     return f"stored:{key}"
 
 
+def _memory_list(ctx: ToolContext, args: dict[str, Any]) -> str:
+    import json
+
+    keys = ctx.memory.keys()
+    return json.dumps({"keys": keys}, ensure_ascii=False)
+
+
 def memory_tool_definitions() -> list[ToolDefinition]:
     return [
         ToolDefinition(
@@ -46,5 +53,11 @@ def memory_tool_definitions() -> list[ToolDefinition]:
                 "required": ["key", "value"],
             },
             handler=_memory_set,
+        ),
+        ToolDefinition(
+            name="memory_list",
+            description="List all keys currently stored in shared session memory.",
+            parameters={"type": "object", "properties": {}},
+            handler=_memory_list,
         ),
     ]
