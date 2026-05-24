@@ -119,11 +119,25 @@ def main(argv: list[str] | None = None) -> int:
         help="Validate workflow JSON and print planned steps without executing agents",
     )
 
+    validate = sub.add_parser("validate", help="Validate a workflow JSON file")
+    validate.add_argument("--file", required=True)
+
     args = parser.parse_args(argv)
 
     configure_logging(verbose=args.verbose, json_mode=args.json_out)
 
     registry = build_default_registry()
+
+    if args.command == "validate":
+        path = Path(args.file)
+        parsed = load_workflow_file(path)
+        summary = {
+            "valid": True,
+            "steps": len(parsed.steps),
+            "warnings": list(parsed.warnings),
+        }
+        print(json.dumps(summary, indent=2))
+        return 0
 
     if args.command == "delegate":
         llm = _build_llm(args.mock_llm)
