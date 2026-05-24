@@ -32,3 +32,13 @@ def test_registry_serializes_dict_result():
     out = reg.execute("demo", "{}", ctx)
     assert '"ok": true' in out.replace(" ", "")
 
+
+def test_registry_reraises_tool_execution_error():
+    def handler(ctx, args):
+        raise ToolExecutionError("boom")
+
+    reg = ToolRegistry([ToolDefinition("bad", "d", {"type": "object", "properties": {}}, handler)])
+    ctx = ToolContext(memory=SharedMemory())
+    with pytest.raises(ToolExecutionError, match="boom"):
+        reg.execute("bad", "{}", ctx)
+
